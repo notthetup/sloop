@@ -1,0 +1,20 @@
+{
+  "name": "mp3marker",
+  "version": "0.0.0",
+  "description": "a simple app which converts wave files to marked mp3 files",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "keywords": [
+    "mp3",
+    "wave",
+    "audio",
+    "converter",
+    "marker",
+    "seamless",
+    "looping"
+  ],
+  "author": "Chinmay Pendharkar",
+  "license": "MIT"
+}
