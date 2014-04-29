@@ -16,5 +16,8 @@
     "looping"
   ],
   "author": "Chinmay Pendharkar",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "busboy": "~0.2.5"
+  }
 }
