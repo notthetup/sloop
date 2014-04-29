@@ -18,6 +18,8 @@
   "author": "Chinmay Pendharkar",
   "license": "MIT",
   "devDependencies": {
-    "busboy": "~0.2.5"
+    "busboy": "~0.2.5",
+    "ndarray-wav": "~0.2.0",
+    "ndarray": "~1.0.13"
   }
 }

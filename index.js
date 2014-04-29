@@ -1,4 +1,4 @@
-var http = require('http'),
+/*var http = require('http'),
 inspect = require('util').inspect;
 
 var Busboy = require('busboy');
@@ -36,13 +36,17 @@ http.createServer(function(req, res) {
   }
 }).listen(8000, function() {
   console.log('Listening for requests');
-});
+});*/
 
-// Example output, using http://nodejs.org/images/ryan-speaker.jpg as the file:
-//
-// Listening for requests
-// File [filefield]: filename: ryan-speaker.jpg, encoding: binary
-// File [filefield] got 11971 bytes
-// Field [textfield]: value: 'testing! :-)'
-// File [filefield] Finished
-// Done parsing form!
+Wavemarker = require('./wavemarker');
+
+wm = new Wavemarker();
+
+wm.mark("sine-stereo.wav", function (err, path){
+  if (err){
+    console.error(err);
+  } else{
+    console.log("File saved to " + path);
+  }
+
+});
