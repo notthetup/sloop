@@ -56,7 +56,7 @@ function Wavemarker (){
 
 		// Write postfix
 		var postFixStart = postfixLength + originalLength;
-		console.log(postFixStart);
+		//console.log(postFixStart);
 		for (index = 0; index < postfixLength; index++)
 		{
 			// Put spike in center

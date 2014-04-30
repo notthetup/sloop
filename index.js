@@ -42,7 +42,7 @@ Wavemarker = require('./wavemarker');
 
 wm = new Wavemarker();
 
-wm.mark("sine-stereo.wav", function (err, path){
+wm.mark("sine.wav", function (err, path){
   if (err){
     console.error(err);
   } else{
