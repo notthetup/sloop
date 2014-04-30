@@ -1,5 +1,5 @@
 {
-  "name": "mp3marker",
+  "name": "loopmarker",
   "version": "0.0.0",
   "description": "a simple app which converts wave files to marked mp3 files",
   "main": "index.js",
@@ -20,6 +20,8 @@
   "devDependencies": {
     "busboy": "~0.2.5",
     "ndarray-wav": "~0.2.0",
-    "ndarray": "~1.0.13"
+    "ndarray": "~1.0.13",
+    "fluent-ffmpeg": "~1.7.1",
+    "ndarray-fill": "~1.0.1"
   }
 }

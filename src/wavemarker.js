@@ -1,6 +1,7 @@
 var wav = require('ndarray-wav');
 var assert = require('assert');
 var ndarray = require('ndarray');
+var fill = require("ndarray-fill")
 
 function Wavemarker (){
 
@@ -102,6 +103,7 @@ function Wavemarker (){
  	options = options || {};
  	options.postfixLength = options.hasOwnProperty('postfixLength') ? options.postfixLength : 5000;
  	options.rampLength = options.hasOwnProperty('rampLength') ? options.rampLength : 1000;
+ 	options.forceStereo = options.hasOwnProperty('forceStereo') ? options.forceStereo : false;
  	options.force = options.hasOwnProperty('force') ? options.force : false;
 
  	if (! options.hasOwnProperty('markedFilePath')){
@@ -124,6 +126,18 @@ function Wavemarker (){
 		var originalSamples = chunkMap.data; // the wave data as an ndarray
 		var originalLength = originalSamples.shape[1];
 		//console.log(format.channels + ": " +  originalSamples.shape[0]);
+
+		if (options.forceStereo && format.channels === 1){
+			var stereoSamples = new ndarray(new Float32Array(originalLength*2), [2, originalLength]);
+
+			fill(stereoSamples, function(i,j) {
+			  return originalSamples.get(0,j);
+			});
+
+			format.channels = 2;
+			originalSamples = stereoSamples;
+		}
+
 		assert(format.channels == originalSamples.shape[0]);
 
 		if (self._checkSeamlessLoop(originalSamples) || options.force){
