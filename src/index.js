@@ -1,53 +1,63 @@
+Wavemarker = require('./wavemarker');
+Encoder = require('./mp3encoder');
+
 var http = require('http'),
 path = require('path'),
 os = require('os'),
-inspect = require('util').inspect;
-Wavemarker = require('./wavemarker');
-Mp3Encoder = require('./mp3encoder');
-var fileSystem = require('fs');
-
+fs = require('fs'),
+shortId = require('shortid');
 
 var Busboy = require('busboy');
-var wm = new Wavemarker();
-var enc = new Mp3Encoder();
+
+wm = new Wavemarker();
+enc = new Encoder();
+
+storageFolder = "audio/";
 
 http.createServer(function(req, res) {
 	if (req.method === 'POST') {
+		var saveTo;
 		var busboy = new Busboy({ headers: req.headers });
 		busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
-			var saveTo = path.join(os.tmpDir(), path.basename(fieldname));
-			file.pipe(fileSystem.createWriteStream(saveTo));
+			saveTo = path.join(os.tmpDir(), path.basename(filename));
+			file.pipe(fs.createWriteStream(saveTo));
+			console.log("saving to " + saveTo);
 		});
 		busboy.on('finish', function() {
-			wm.mark("audio/sine.wav", function (err, path){
+			var thisFileID = shortId.generate();
+			console.log("Marking " + saveTo);
+			wm.mark(saveTo, function (err, path){
 				if (err){
 					console.error(err);
 					res.writeHead(200, { 'Connection': 'Error ' +  err.message});
 					res.end("Ooops!");
 				} else{
-					//console.log("File saved to " + path);
+					console.log("File saved to " + path);
 					enc.encode(path, function(err, path){
 						if (err){
 							console.error(err);
 							res.writeHead(200, { 'Connection': 'Error ' +  err.message});
 							res.end("Ooops!");
 						} else{
-							//console.log("Encoded to " + path);
-							res.setHeader('Content-disposition', 'attachment; filename=' + path.split('/').splice(-1,1));
-							res.setHeader('Content-type', "audio/mp3");
-							var filestream = fileSystem.createReadStream(path);
-							filestream.pipe(res);
+							console.log("Encoded to " + path);
+							fs.rename(path, storageFolder+thisFileID);
+							console.log("Store to " + storageFolder+thisFileID);
+							res.writeHead(200, { Connection: 'close' });
+							res.end('<html><head></head><body>\
+								<div>Your file was stored at </div>\
+								</form>\
+								</body></html>');
 						}
-					})
+					});
 				}
 			});
 		});
-		req.pipe(busboy);
-	}
-	else if (req.method === 'GET') {
+		return req.pipe(busboy);
+	} else if (req.method === 'GET') {
 		res.writeHead(200, { Connection: 'close' });
 		res.end('<html><head></head><body>\
 			<form method="POST" enctype="multipart/form-data">\
+			<input type="text" name="textfield"><br />\
 			<input type="file" name="filefield"><br />\
 			<input type="submit">\
 			</form>\
@@ -56,3 +66,51 @@ http.createServer(function(req, res) {
 }).listen(8000, function() {
 	console.log('Listening for requests');
 });
+
+// http.createServer(function(req, res) {
+// 	if (req.method === 'POST') {
+// 		var saveTo;
+// 		var busboy = new Busboy({ headers: req.headers });
+// 		busboy.on('file', function(fieldname, file, filename, encoding, mimetype) {
+// 			saveTo = path.join(os.tmpDir(), path.basename(filename));
+// 			console.log("Saving to " + saveTo);
+// 			file.pipe(fileSystem.createWriteStream(saveTo));
+// 		});
+// 		busboy.on('finish', function() {
+// 			var thisFileID = shortId.generate();
+// 			console.log("Marking " + saveTo);
+// 			wm.mark(saveTo, function (err, path){
+// 				if (err){
+// 					console.error(err);
+// 					res.writeHead(200, { 'Connection': 'Error ' +  err.message});
+// 					res.end("Ooops!");
+// 				} else{
+// 					//console.log("File saved to " + path);
+// 					enc.encode(path, function(err, path){
+// 						if (err){
+// 							console.error(err);
+// 							res.writeHead(200, { 'Connection': 'Error ' +  err.message});
+// 							res.end("Ooops!");
+// 						} else{
+// 							console.log("Encoded to " + path);
+// 							fs.rename(path, storageFolder+thisFileID);
+// 							console.log("Store to " + storageFolder+thisFileID);
+// 						}
+// 					});
+// 				}
+// 			});
+// 		});
+// 		req.pipe(busboy);
+// 	}
+// 	else if (req.method === 'GET') {
+// 		res.writeHead(200, { Connection: 'close' });
+// 		res.end('<html><head></head><body>\
+// 			<form method="POST" enctype="multipart/form-data">\
+// 			<input type="file"><br />\
+// 			<input type="submit">\
+// 			</form>\
+// 			</body></html>');
+// 	}
+// }).listen(8000, function() {
+// 	console.log('Listening for requests');
+// });

@@ -131,7 +131,7 @@ function Wavemarker (){
 			var stereoSamples = new ndarray(new Float32Array(originalLength*2), [2, originalLength]);
 
 			fill(stereoSamples, function(i,j) {
-			  return originalSamples.get(0,j);
+				return originalSamples.get(0,j);
 			});
 
 			format.channels = 2;
@@ -154,6 +154,6 @@ function Wavemarker (){
 			callback(new Error ("Input doesn't seem like a seamless loop, use the option 'force'."));
 		}
 	});
- }
+}
 
- module.exports = Wavemarker
+module.exports = Wavemarker
